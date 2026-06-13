@@ -1,4 +1,3 @@
-#if desktop
 package flxanimate;
 
 import openfl.Assets;
@@ -65,4 +64,3 @@ class AnimateSprite extends FlxAnimate
 		return jsontxt;
 	}
 }
-#end
