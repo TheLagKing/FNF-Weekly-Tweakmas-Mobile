@@ -20,11 +20,6 @@ jobs:
           haxelib install hmm --quiet
           haxelib run hmm install --quiet
 
-      - name: Compile hxcpp
-        run: |
-          cd .haxelib/hxcpp/git/tools/hxcpp
-          haxe compile.hxml
-
       - name: Restore Cache
         uses: actions/cache@v5
         with:
