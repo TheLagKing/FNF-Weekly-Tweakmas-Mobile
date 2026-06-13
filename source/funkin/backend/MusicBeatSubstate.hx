@@ -4,6 +4,12 @@ import funkin.backend.PlayerSettings;
 import funkin.data.*;
 import funkin.data.scripts.*;
 import flixel.FlxSubState;
+#if mobile
+import flixel.group.FlxGroup;
+import flixel.FlxCamera;
+import mobile.controls.MobileHitbox;
+import mobile.controls.MobileVirtualPad;
+#end
 
 class MusicBeatSubstate extends FlxSubState
 {
@@ -27,6 +33,87 @@ class MusicBeatSubstate extends FlxSubState
 	public var scripted:Bool = false;
 	public var scriptName:String = 'Placeholder';
 	public var script:OverrideStateScript;
+	
+	#if mobile
+	public var hitbox:MobileHitbox;
+	public var virtualPad:MobileVirtualPad;
+
+	public var virtualPadCam:FlxCamera;
+	public var hitboxCam:FlxCamera;
+
+    public function addVirtualPad(DPad:MobileDPadMode, Action:MobileActionMode)
+	{
+		virtualPad = new MobileVirtualPad(DPad, Action);
+		add(virtualPad);
+	}
+	
+	public function addVirtualPadCamera(DefaultDrawTarget:Bool = false)
+	{
+		if (virtualPad != null)
+		{
+			virtualPadCam = new FlxCamera();
+			virtualPadCam.bgColor.alpha = 0;
+			FlxG.cameras.add(virtualPadCam, DefaultDrawTarget);
+			
+			virtualPad.cameras = [virtualPadCam];
+		}
+	}
+
+	public function removeVirtualPad()
+	{
+		if (virtualPad != null)
+		{
+			remove(virtualPad);
+			virtualPad = FlxDestroyUtil.destroy(virtualPad);
+		}
+
+		if(virtualPadCam != null)
+		{
+			FlxG.cameras.remove(virtualPadCam);
+			virtualPadCam = FlxDestroyUtil.destroy(virtualPadCam);
+		}
+	}
+
+	public function addMobileControls(DefaultDrawTarget:Bool = false)
+	{
+		hitbox = new MobileHitbox();
+		
+		hitboxCam = new FlxCamera();
+		hitboxCam.bgColor.alpha = 0;
+		FlxG.cameras.add(hitboxCam, DefaultDrawTarget);
+		
+		hitbox.cameras = [hitboxCam];
+		hitbox.visible = false;
+		add(hitbox);
+		
+		for (hbox in hitbox.members)
+		{
+			hbox.scale.x = (FlxG.width / 4) / hbox.frameWidth;
+			hbox.scale.y = FlxG.height / hbox.frameHeight;
+			hbox.updateHitbox();
+		}
+		
+		for (i in 0...hitbox.length)
+		{
+			hitbox.members[i].x = hitbox.members[i].width * i;
+		}
+	}
+
+	public function removeMobileControls()
+	{
+		if (hitbox != null)
+		{
+			remove(hitbox);
+			hitbox = FlxDestroyUtil.destroy(hitbox);
+		}
+
+		if(hitboxCam != null)
+		{
+			FlxG.cameras.remove(hitboxCam);
+			hitboxCam = FlxDestroyUtil.destroy(hitboxCam);
+		}
+	}
+	#end
 
 	public function setUpScript(s:String = 'Placeholder')
 	{

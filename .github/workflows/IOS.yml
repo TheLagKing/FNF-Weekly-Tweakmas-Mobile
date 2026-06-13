@@ -1,0 +1,60 @@
+name: iOS Build
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    name: Build iOS
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@main
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.3.7
+
+      - name: Install Libraries
+        run: |
+          haxelib install hmm --quiet
+          haxelib run hmm install --quiet
+
+      - name: Compile hxcpp
+        run: |
+          cd .haxelib/hxcpp/git/tools/hxcpp
+          haxe compile.hxml
+
+      - name: Rebuild hxcpp
+        run: haxelib run lime rebuild hxcpp
+
+      - name: Clean
+        run: |
+          rm -rf export
+          haxelib run lime clean ios
+
+      - name: Compile
+        run: haxelib run lime build ios -nosign
+
+      - name: Making ipa file
+        run: |
+          brew install ldid
+
+          cd export/release/ios/build/Release-iphoneos
+
+          ldid -S FNF WEEKLY TWEAKMAS MOBILE.app/FNF WEEKLY TWEAKMAS MOBILE
+
+          mkdir Payload
+          mv FNF WEEKLY TWEAKMAS MOBILE.app Payload
+          zip -r FNF WEEKLY TWEAKMAS MOBILE.ipa Payload
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: FNF WEEKLY TWEAKMAS MOBILE-iOS
+          path: export/release/ios/build/Release-iphoneos/*.ipa
+          if-no-files-found: error

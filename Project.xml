@@ -30,7 +30,7 @@
 	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" vsync="false"/>
 
 	<!--Mobile-specific-->
-	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" resizable="false"/>
+	<window if="mobile" orientation="landscape" fullscreen="true" resizable="false" allow-shaders="true" require-shaders="true" allow-high-dpi="true"/>
 
 	<!--Switch-specific-->
 	<window if="switch" orientation="landscape" fullscreen="true" width="0" height="0" resizable="true" />
@@ -44,12 +44,13 @@
 	<classpath name="source" />
 	
 	<!-- PSYCH ENGINE CUSTOMIZATION -->
-	<define name="MODS_ALLOWED" if="desktop" />
-	<define name="LUA_ALLOWED" if="desktop" />
+	<define name="MODS_ALLOWED" if="desktop || mobile" />
+	<define name="LUA_ALLOWED" if="desktop || mobile" />
 	<define name="VIDEOS_ALLOWED" if="cpp" />
-	<define name="DISCORD_ALLOWED" if="cpp"/>
+	<define name="DISCORD_ALLOWED" if="desktop"/>
 
-	<assets path='assets/embeds' 		rename='assets'			embed="true" />
+	<assets path='assets/embeds' 		rename='assets'			embed="false" />
+	<assets path="assets/mobile" if="mobile"/>
 	<assets path="assets/fonts" />
 	<assets path="assets/shared"        exclude="*.ogg" 		if="web"/>
 	<assets path="assets/shared"        exclude="*.mp3" 		unless="web"/>
@@ -114,12 +115,25 @@
 
 	<!--Enable this for Nape release builds for a serious peformance improvement-->
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
+	
+	<!--Avoid memory leaks with for loops in HScript-->
+	<haxedef name="loop_unroll_max_cost" value="25" />
+	<haxedef name="DISABLED_MACRO_SUPERLATIVE" if="mobile" />
 
 	<!-- <haxedef name="FLX_NO_PITCH" /> -->
 
 	<haxedef name="message.reporting" value="pretty" />
 	
 	<haxedef name="no-deprecation-warnings"/>
+	
+	<section if="android">
+		<certificate path="tweakmas-key.keystore" password="weeklyteam" alias="fckingweeklyidfk" alias-password="weeklyteam" if="android" unless="debug" />
+	</section>
+
+	<section if="ios">
+		<config:ios category_type="public.app-category.music-games" />
+		<config:mac category_type="public.app-category.music-games" />
+	</section>
 
 	<!-- <haxelib name="markdown" /> -->
 	<!-- <haxelib name="HtmlParser" /> -->
@@ -153,6 +167,10 @@
 
 
 	<!-- _________________________________ Custom _______________________________ -->
+		
+	<!-- Basic Support For Kizzy -->
+	<java path="source/mobile/android/" if="android" />
+	<java path="mobile/android/" if="android" />
 
 	<!--Place custom nodes like icons here (higher priority to override the HaxeFlixel icon)-->
 	

@@ -26,6 +26,25 @@ class VisualsUISubState extends BaseOptionsMenu
 
 		var option:Option = new Option('Camera Zooms', "If unchecked, the camera won't zoom in on a beat hit.", 'camZooms', 'bool', true);
 		addOption(option);
+		
+		#if mobile
+		var option:Option = new Option('Allow Phone Screensaver',
+		    'If checked, the phone will sleep after going inactive for few seconds.',
+		    'screensaver', 
+		    'bool',
+		    true);
+		option.onChange = () -> lime.system.System.allowScreenTimeout = curOption.getValue(); 
+		addOption(option);
+		
+		#if !ios
+		var option:Option = new Option('Pause Button',
+		    'If unchecked, the pause button will be hidden during gameplay.',
+		    'pauseButton', 
+		    'bool',
+		    true);
+		addOption(option);
+		#end
+		#end
 
 		var option:Option = new Option('Score Text Zoom on Hit', "If unchecked, disables the Score text zooming\neverytime you hit a note.", 'scoreZoom',
 			'bool', true);
@@ -39,11 +58,9 @@ class VisualsUISubState extends BaseOptionsMenu
 		option.decimals = 1;
 		addOption(option);
 
-		#if !mobile
 		var option:Option = new Option('FPS Counter', 'If unchecked, hides FPS Counter.', 'showFPS', 'bool', true);
 		addOption(option);
 		option.onChange = onChangeFPSCounter;
-		#end
 
 		super();
 	}

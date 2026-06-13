@@ -16,6 +16,9 @@ class ClientPrefs
 	// we need to rethink the loading cuz the current setup does not work the best
 	public static var loadingThreads:Int = Math.floor(Std.parseInt(Sys.getEnv("NUMBER_OF_PROCESSORS")) / 2);
 	public static var multicoreLoading:Bool = false;
+	
+	public static var screensaver:Bool = true;
+	public static var pauseButton:Bool = true;
 
 	public static var downScroll:Bool = false;
 	public static var middleScroll:Bool = false;
@@ -151,6 +154,9 @@ class ClientPrefs
 
 		FlxG.save.data.chartPresetList = chartPresetList;
 		FlxG.save.data.chartPresets = chartPresets;
+		
+		FlxG.save.data.screensaver = screensaver;
+		FlxG.save.data.pauseButton = pauseButton;
 
 		FlxG.save.data.downScroll = downScroll;
 		FlxG.save.data.middleScroll = middleScroll;
@@ -227,6 +233,12 @@ class ClientPrefs
 		if (FlxG.save.data.chartPresets != null)
 		{
 			chartPresets = FlxG.save.data.chartPresets;
+		}
+		if(FlxG.save.data.screensaver != null) {
+			screensaver = FlxG.save.data.screensaver;
+		}
+		if(FlxG.save.data.pauseButton != null) {
+			pauseButton = FlxG.save.data.pauseButton;
 		}
 		if (FlxG.save.data.downScroll != null)
 		{

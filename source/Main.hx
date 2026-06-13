@@ -9,6 +9,8 @@ import openfl.Lib;
 import openfl.display.Sprite;
 import openfl.events.Event;
 import openfl.display.StageScaleMode;
+import lime.system.System as LimeSystem;
+import mobile.states.CopyState;
 #if cpp
 import cpp.vm.Gc;
 #elseif hl
@@ -33,7 +35,7 @@ class Main extends Sprite
 	var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
 
-	static var initialState:Class<FlxState> = Init; // The FlxState the game starts with.
+	static var initialState:Class<FlxState> = Splash; // The FlxState the game starts with.
 
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
 	var framerate:Int = 60; // How many frames per second the game should run at.
@@ -61,6 +63,13 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
+		#if mobile
+ 		#if android
+ 		SUtil.requestPermissions();
+ 		#end
+ 		Sys.setCwd(SUtil.getStorageDirectory());
+ 		#end
+		mobile.backend.CrashHandler.init();
 
 		if (stage != null)
 		{
@@ -84,6 +93,7 @@ class Main extends Sprite
 
 	private function setupGame():Void
 	{
+		#if (openfl <= "9.2.0")
 		var stageWidth:Int = Lib.current.stage.stageWidth;
 		var stageHeight:Int = Lib.current.stage.stageHeight;
 
@@ -95,7 +105,12 @@ class Main extends Sprite
 			gameWidth = Math.ceil(stageWidth / zoom);
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
-
+		#else
+		if (zoom == -1.0)
+			zoom = 1.0;
+		#end
+		
+		Splash.nextState = Init;
 		ClientPrefs.loadDefaultKeys();
 
 		var game = new
@@ -103,7 +118,7 @@ class Main extends Sprite
 			FNFGame
 			#else
 			FlxGame
-			#end(gameWidth, gameHeight, #if !debug Splash #else initialState #end, framerate, framerate, skipSplash, startFullscreen);
+			#end(gameWidth, gameHeight, #if (mobile && MODS_ALLOWED) CopyState.checkExistingFiles() ? initialState : CopyState #else initialState #end, framerate, framerate, skipSplash, startFullscreen);
 
 		// FlxG.game._customSoundTray wants just the class, it calls new from
 		// create() in there, which gets called when it's added to stage
@@ -116,7 +131,6 @@ class Main extends Sprite
 
 		addChild(game);
 
-		#if !mobile
 		fpsVar = new DebugDisplay(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
 		Lib.current.stage.align = "tl";
@@ -125,12 +139,15 @@ class Main extends Sprite
 		{
 			fpsVar.visible = ClientPrefs.showFPS;
 		}
-		#end
 
 		#if html5
 		FlxG.autoPause = false;
 		FlxG.mouse.visible = false;
 		#end
+		
+		#if android FlxG.android.preventDefaultKeys = [BACK]; #end
+
+		LimeSystem.allowScreenTimeout = ClientPrefs.screensaver;
 
 		FlxG.signals.gameResized.add(onResize);
 		FlxG.signals.preStateSwitch.add(() -> { 
