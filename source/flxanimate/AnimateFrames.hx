@@ -1,4 +1,3 @@
-#if desktop
 package flxanimate;
 
 import flxanimate.frames.FlxAnimateFrames;
@@ -144,4 +143,3 @@ class AnimateFrames
 		return frames;
 	}
 }
-#end
