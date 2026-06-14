@@ -1,5 +1,5 @@
 package flxanimate;
-
+#if desktop
 import flxanimate.frames.FlxAnimateFrames;
 import flxanimate.data.SpriteMapData.AnimateAtlas;
 import flxanimate.zip.Zip;
@@ -143,3 +143,4 @@ class AnimateFrames
 		return frames;
 	}
 }
+#end
