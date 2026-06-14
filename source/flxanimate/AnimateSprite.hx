@@ -1,5 +1,5 @@
 package flxanimate;
-
+#if desktop
 import openfl.Assets;
 import flxanimate.frames.FlxAnimateFrames;
 import flxanimate.zip.Zip;
@@ -64,3 +64,4 @@ class AnimateSprite extends FlxAnimate
 		return jsontxt;
 	}
 }
+#end
