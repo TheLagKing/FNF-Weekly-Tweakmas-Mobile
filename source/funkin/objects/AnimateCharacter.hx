@@ -1,5 +1,5 @@
 package funkin.objects;
-
+#if desktop
 import openfl.errors.Error;
 import flxanimate.AnimateFrames;
 import flxanimate.animate.FlxSymbol;
@@ -38,3 +38,4 @@ interface Icharacter
 	public function loadJson():Void;
 	public function addOffset():Void;
 }
+#end
