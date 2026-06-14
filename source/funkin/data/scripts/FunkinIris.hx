@@ -251,7 +251,7 @@ class FunkinIris extends FunkinScript
 		set("FlxRuntimeShader", flixel.addons.display.FlxRuntimeShader);
 		set("FlxFlicker", flixel.effects.FlxFlicker);
 		set('FlxSpriteUtil', flixel.util.FlxSpriteUtil);
-		set('AnimateSprite', flxanimate.AnimateSprite);
+		#if desktop set('AnimateSprite', flxanimate.AnimateSprite); #end
 		set("FlxBackdrop", flixel.addons.display.FlxBackdrop);
 		set("FlxTiledSprite", flixel.addons.display.FlxTiledSprite);
 		set("FlxPieDial", flixel.addons.display.FlxPieDial);
